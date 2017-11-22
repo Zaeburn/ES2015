@@ -173,8 +173,12 @@ Examples:
 */
 
 
-function flip(fn, thisArg){
-  
+function flip(fn, thisArg, ...outerArgs){
+  return function(...innerArgs){
+    let allArgs = outerArgs.concat(innerArgs).slice(0,fn.length);
+    // debugger;
+    return fn.apply(thisArg, allArgs.reverse());
+  }
 }
 
 /* 
@@ -208,7 +212,21 @@ Examples:
   bind(addFourNumbers,this)(1,2,3,4,5,6,7,8,9,10) // 10
 
 */
+// my solution
+function bind(fn, thisArg, ...outerArgs){
+  return function(...innerArgs) {
+    var allArgs = outerArgs.concat(innerArgs);//.slice(0, fn.length);
+    // debugger;
+    return fn.apply(thisArg, allArgs);
+  }
+}
 
-function bind(fn, thisArg){
-  
+// offical solution
+// rest operator
+function bind(fn, thisArg, ...outerArgs){
+// rest operator  
+  return function(...innerArgs) {
+// spread operator
+    return fn.apply(thisArg, [...outerArgs, ...innerArgs]);
+  }
 }

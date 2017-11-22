@@ -14,7 +14,7 @@ printRest(1,2,3,4,5);
 // [3,4,5]
 ```
 
-- The rest operator always returns an array 
+- The rest operator always returns an **array**   
 - Is called the rest operator "only" when it is a parameter to a function
 - Is accessed without the ... in a function
 - A better alternative to using the arguments array-like- object
