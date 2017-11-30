@@ -559,3 +559,110 @@ function countPairs(arr, num){
   }
   return count;
 }
+
+/*******  ES2015 Promises Assignment  *******/
+
+/*
+1. Write a function called hasMostFollowers, which accepts a variable number of arguments. You should then make an AJAX call to the Github User API (https://developer.github.com/v3/users/#get-a-single-user) to get the name and number of followers of each argument. The function should return a string which displays the username who has the most followers. 
+
+Hint - Try to use Promise.all to solve this and remember that the jQuery AJAX methods ($.getJSON, $.ajax, etc.) return a promise.
+
+hasMostFollowers('elie','tigarcia','colt').then(function(data){
+    console.log(data)
+});
+ 
+"Colt has the most followers with 424" 
+
+Hi Elie,
+
+I found sometimes using > will cause unknown results.
+
+e.g.
+
+var arr = [21, 0, 3, 11, 4, 5, 6, 7, 8, 9];
+arr.sort(function(a,b){
+  return a<b;
+});
+// (10) [21, 11, 9, 8, 7, 6, 5, 4, 3, 0]
+var arr = [21, 0, 3, 11, 4, 5, 6, 7, 8, 9, 10];
+arr.sort(function(a,b){
+  return a<b;
+});
+// (11) [5, 21, 11, 10, 9, 8, 7, 6, 4, 3, 0]
+In this case - is a batter choice.
+
+*/
+function hasMostFollowers(...users){
+  let baseUrl = `https://api.github.com/users/`;
+  let usersData = users.map(userName => $.getJSON(baseUrl + userName));
+  return Promise.all(usersData).then(function(data){
+    let max = data.sort((a,b) => a.followers - b.followers)[data.length -1];
+    return `${max.login} has the most followers with ${max.followers}`;
+  })
+}
+
+/*
+
+2. Write a function called starWarsString, which accepts a number. You should then make an AJAX call to the Star Wars API (https://swapi.co/ ) to search for a specific character by the number passed to the function. Your function should return a promise that when resolved will console.log the name of the character.
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker"
+
+*/
+function starWarsString(number){
+  return $.getJSON(`https://swapi.co/api/people/${number}`).then(function(data){
+    return data.name;
+  })
+}
+/*
+
+Bonus 1 -  Using the data from the previous AJAX call above, make another AJAX request to get the first film that character is featured in and return a promise that when resolved will console.log the name of the character and the film they are featured in 
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker is featured in The Empire Strikes Back, directed by Irvin Kershner"
+*/
+function starWarsString(number){
+  var str = '';
+  return $.getJSON(`https://swapi.co/api/people/${number}`)
+  .then(function(val){
+    str += `${val.name} is featured in `;
+    return $.getJSON(`${val.films[0]}`); 
+  })
+  .then(function(filmData){
+    str+=`${filmData.title}, directed by ${filmData.director}.`;
+    return str;
+  })
+}
+
+/*
+Bonus 2 -  Using the data from Bonus 1 - make another AJAX call to get the information about the first planet that the film contains. Your function should return a promise that when resolved will console.log the name of the character and the film they are featured in and the name of the planet. 
+
+starWarsString(1).then(function(data){
+    console.log(data)
+})
+ 
+"Luke Skywalker is featured in The Empire Strikes Back, directed by Irvin Kershne
+
+*/
+function starWarsString(number){
+  var str = '';
+  return $.getJSON(`https://swapi.co/api/people/${number}`)
+  .then(function(val){
+    str += `${val.name} is featured in `;
+    return $.getJSON(`${val.films[0]}`); 
+  })
+  .then(function(filmData){
+    str += `${filmData.title}, directed by ${filmData.director}`;
+    return $.getJSON(`${filmData.planets[0]}`);
+  })
+  .then(function(planetDat){
+    str += ` and it takes place on planet ${planetDat.name}`;
+    return str;
+  })
+}
